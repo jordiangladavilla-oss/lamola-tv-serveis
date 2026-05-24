@@ -1,0 +1,903 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <title>La Mola · Serveis · Admin</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="icon" href="media/brand/logo-short.png" type="image/png">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--ink); color: var(--bone); font-family: var(--f-display); }
+    body { min-height: 100vh; }
+
+    .top {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 28px;
+      border-bottom: 1px solid rgba(243,236,217,0.1);
+      background: var(--ink);
+      position: sticky; top: 0; z-index: 30;
+    }
+    .top .brand { font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+    .top .brand em { font-style: italic; color: var(--accent-hi); }
+    .top .sep { opacity: 0.4; }
+    .top .sub { font-size: 13px; opacity: 0.6; letter-spacing: 0.08em; text-transform: uppercase; }
+    .top .spacer { flex: 1; }
+    .top .link {
+      color: var(--bone); opacity: 0.7; text-decoration: none;
+      font-size: 13px; padding: 6px 12px; border: 1px solid rgba(243,236,217,0.18); border-radius: 999px;
+    }
+    .top .link:hover { opacity: 1; }
+    .top .count {
+      font-size: 12px; opacity: 0.7; padding: 6px 10px;
+      background: rgba(243,236,217,0.06); border-radius: 999px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .top .count b { color: var(--accent-hi); font-weight: 700; }
+
+    .hero {
+      padding: 36px 28px 12px;
+      max-width: 1400px;
+    }
+    .hero h1 {
+      font-size: clamp(34px, 4vw, 56px);
+      font-weight: 800; letter-spacing: -0.02em; margin: 0 0 8px;
+      line-height: 1;
+    }
+    .hero h1 em { font-style: italic; color: var(--accent-hi); font-weight: 500; }
+    .hero .lede { font-size: 15px; opacity: 0.7; max-width: 60ch; }
+
+    .tabs {
+      display: flex; gap: 4px;
+      padding: 8px 28px 0;
+      border-bottom: 1px solid rgba(243,236,217,0.1);
+    }
+    .tabs button {
+      appearance: none; background: transparent; color: var(--bone);
+      border: 0; padding: 12px 18px;
+      font: inherit; font-size: 14px; font-weight: 600; letter-spacing: 0.04em;
+      opacity: 0.5; cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: opacity 150ms, border-color 150ms;
+    }
+    .tabs button:hover { opacity: 0.85; }
+    .tabs button.active { opacity: 1; border-bottom-color: var(--accent-hi); }
+
+    .toolbar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 28px;
+      background: var(--ink-soft);
+      border-bottom: 1px solid rgba(243,236,217,0.08);
+      position: sticky; top: 57px; z-index: 25;
+    }
+    .btn {
+      appearance: none; background: var(--bone); color: var(--ink);
+      border: 0; padding: 10px 18px; border-radius: 8px;
+      font: inherit; font-size: 14px; font-weight: 600;
+      cursor: pointer; letter-spacing: 0.02em;
+      transition: transform 100ms, opacity 150ms;
+    }
+    .btn:hover { opacity: 0.9; }
+    .btn:active { transform: scale(0.98); }
+    .btn.primary { background: var(--accent-hi); color: var(--ink); }
+    .btn.ghost { background: transparent; color: var(--bone); border: 1px solid rgba(243,236,217,0.2); }
+    .btn.danger { background: transparent; color: #e89e8a; border: 1px solid rgba(232,158,138,0.3); }
+    .btn.icon { padding: 8px 10px; font-size: 13px; }
+    .toolbar .spacer { flex: 1; }
+    .status {
+      font-size: 13px; padding: 6px 12px; border-radius: 6px;
+      opacity: 0; transition: opacity 200ms;
+    }
+    .status.show { opacity: 1; }
+    .status.ok { background: rgba(133,196,140,0.15); color: #a8d8af; }
+    .status.err { background: rgba(232,124,108,0.15); color: #e89e8a; }
+    .status.info { background: rgba(185,169,114,0.15); color: var(--accent-hi); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      gap: 24px;
+      padding: 24px 28px 80px;
+      max-width: 1800px;
+    }
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .preview-wrap { position: static !important; }
+    }
+
+    .editor { min-width: 0; }
+    .pane { display: none; }
+    .pane.active { display: block; }
+
+    .card {
+      background: var(--ink-soft);
+      border: 1px solid rgba(243,236,217,0.08);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+    .card-head {
+      display: flex; align-items: center; gap: 12px;
+      cursor: pointer; user-select: none;
+    }
+    .card-head .grip { opacity: 0.4; font-size: 13px; }
+    .card-head .name { flex: 1; font-size: 17px; font-weight: 700; }
+    .card-head .name em { font-style: italic; color: var(--accent-hi); font-weight: 500; }
+    .card-head .tag {
+      font-size: 11px; padding: 3px 8px; border-radius: 999px;
+      background: rgba(185,169,114,0.18); color: var(--accent-hi);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .card-head .toggle {
+      width: 36px; height: 20px; border-radius: 999px;
+      background: rgba(243,236,217,0.15);
+      position: relative; cursor: pointer; flex-shrink: 0;
+    }
+    .card-head .toggle::after {
+      content: ""; position: absolute;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--bone);
+      top: 2px; left: 2px;
+      transition: left 180ms;
+    }
+    .card-head .toggle.on { background: var(--accent-hi); }
+    .card-head .toggle.on::after { left: 18px; background: var(--ink); }
+    .card-head .chev { opacity: 0.5; transition: transform 180ms; }
+    .card.collapsed .chev { transform: rotate(-90deg); }
+    .card.collapsed .card-body { display: none; }
+
+    .card-body { padding-top: 16px; display: grid; gap: 14px; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      opacity: 0.6; font-weight: 600;
+    }
+    .field input, .field textarea, .field select {
+      appearance: none;
+      background: var(--ink);
+      color: var(--bone);
+      border: 1px solid rgba(243,236,217,0.14);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: inherit; font-size: 14px;
+      outline: none;
+      transition: border-color 120ms;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      border-color: var(--accent-hi);
+    }
+    .field textarea { resize: vertical; min-height: 80px; font-family: var(--f-display); }
+    .field .hint { font-size: 12px; opacity: 0.5; }
+    .field .swatch-input { display: flex; gap: 8px; align-items: center; }
+    .field .swatch-input input[type="color"] {
+      width: 38px; height: 38px; padding: 0; border-radius: 6px;
+      background: transparent; border: 1px solid rgba(243,236,217,0.14);
+      cursor: pointer;
+    }
+
+    .bullets-list { display: flex; flex-direction: column; gap: 8px; }
+    .bullets-list .bullet-row { display: flex; gap: 8px; align-items: center; }
+    .bullets-list .bullet-row input { flex: 1; }
+    .bullets-list .bullet-row button { flex-shrink: 0; }
+
+    .preview-wrap {
+      position: sticky; top: 130px;
+      align-self: start;
+    }
+    .preview-label {
+      font-size: 11px; opacity: 0.6; letter-spacing: 0.14em;
+      text-transform: uppercase; margin-bottom: 8px; font-weight: 600;
+    }
+    .preview-frame {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--ink);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(243,236,217,0.12);
+      position: relative;
+    }
+    .preview-frame iframe {
+      width: 100%; height: 100%; border: 0;
+      display: block;
+    }
+    .preview-info {
+      margin-top: 10px;
+      font-size: 12px; opacity: 0.55;
+      display: flex; justify-content: space-between;
+    }
+
+    /* Modal */
+    .modal-back {
+      position: fixed; inset: 0; background: rgba(16,14,11,0.7);
+      backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 100;
+    }
+    .modal-back.on { display: flex; }
+    .modal {
+      background: var(--ink-soft);
+      border: 1px solid rgba(243,236,217,0.12);
+      border-radius: 14px;
+      padding: 28px;
+      max-width: 500px; width: 90vw;
+    }
+    .modal h2 { margin: 0 0 6px; font-size: 22px; font-weight: 800; }
+    .modal p { margin: 0 0 18px; opacity: 0.7; font-size: 14px; }
+    .modal .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+    .modal-fields { display: flex; flex-direction: column; gap: 12px; }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">LA MOLA<em>.</em></div>
+    <div class="sep">·</div>
+    <div class="sub">Serveis · Admin</div>
+    <div class="spacer"></div>
+    <div class="count"><b id="count-active">0</b> actius</div>
+    <a class="link" href="index.html" target="_blank">↗ Veure TV</a>
+  </header>
+
+  <section class="hero">
+    <h1>Gestió de <em>serveis</em></h1>
+    <div class="lede">Edita professionals, merch i configuració del kiosk del coffee corner. Els canvis es guarden al navegador i es publiquen a GitHub.</div>
+  </section>
+
+  <nav class="tabs">
+    <button data-tab="pros" class="active">Professionals</button>
+    <button data-tab="merch">Merch</button>
+    <button data-tab="config">Config</button>
+  </nav>
+
+  <div class="toolbar">
+    <button class="btn primary" id="btn-publish">Publicar a GitHub</button>
+    <button class="btn ghost" id="btn-download">Descarregar JSON</button>
+    <button class="btn ghost" id="btn-reload">Recarregar preview</button>
+    <div class="spacer"></div>
+    <div class="status" id="status"></div>
+    <button class="btn danger icon" id="btn-discard">Descartar canvis</button>
+  </div>
+
+  <main class="layout">
+    <div class="editor">
+      <div class="pane active" data-pane="pros" id="pane-pros"></div>
+      <div class="pane" data-pane="merch" id="pane-merch"></div>
+      <div class="pane" data-pane="config" id="pane-config"></div>
+    </div>
+    <aside class="preview-wrap">
+      <div class="preview-label">Previsualització</div>
+      <div class="preview-frame">
+        <iframe id="preview" src="index.html?preview=1"></iframe>
+      </div>
+      <div class="preview-info">
+        <span>El TV final s'actualitza ~10 min després de publicar</span>
+      </div>
+    </aside>
+  </main>
+
+  <!-- GH config modal -->
+  <div class="modal-back" id="modal-gh">
+    <div class="modal">
+      <h2>Connectar amb GitHub</h2>
+      <p>Necessites un Personal Access Token amb permís <b>repo</b>. Es guarda només al teu navegador.</p>
+      <div class="modal-fields">
+        <div class="field">
+          <label>Repositori (usuari/repo)</label>
+          <input id="gh-repo" placeholder="jordiangladavilla-oss/lamola-tv-serveis">
+        </div>
+        <div class="field">
+          <label>Branca</label>
+          <input id="gh-branch" value="main">
+        </div>
+        <div class="field">
+          <label>Token (ghp_...)</label>
+          <input id="gh-token" type="password" placeholder="ghp_...">
+          <div class="hint">Crea'n un a <a href="https://github.com/settings/tokens/new?scopes=repo&description=La%20Mola%20TV%20Serveis" target="_blank" style="color:var(--accent-hi)">github.com/settings/tokens</a></div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="gh-cancel">Cancel·lar</button>
+        <button class="btn primary" id="gh-save">Guardar i publicar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // ===== Constants =====
+  const STORAGE_DATA = 'lamola_serveis_draft';
+  const STORAGE_CONFIG = 'lamola_serveis_config_draft';
+  const GH_KEY = 'lamola_serveis_gh';
+
+  // ===== DOM helpers =====
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => Array.from(document.querySelectorAll(s));
+  const esc = (v) => v == null ? '' : String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  let DATA = null;
+  let CONFIG = null;
+  let previewTimer = null;
+
+  // ===== Load =====
+  async function loadAll() {
+    // services.json
+    const draft = localStorage.getItem(STORAGE_DATA);
+    if (draft) {
+      try { DATA = JSON.parse(draft); }
+      catch { DATA = await fetchJson('services.json'); }
+    } else {
+      DATA = await fetchJson('services.json');
+    }
+    // config.json
+    const cdraft = localStorage.getItem(STORAGE_CONFIG);
+    if (cdraft) {
+      try { CONFIG = JSON.parse(cdraft); }
+      catch { CONFIG = await fetchJson('config.json'); }
+    } else {
+      CONFIG = await fetchJson('config.json');
+    }
+    renderAll();
+  }
+  async function fetchJson(path) {
+    const res = await fetch(path + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('Fetch failed ' + path);
+    return res.json();
+  }
+
+  function saveDraft() {
+    localStorage.setItem(STORAGE_DATA, JSON.stringify(DATA));
+    localStorage.setItem(STORAGE_CONFIG, JSON.stringify(CONFIG));
+    refreshPreviewDebounced();
+    updateCount();
+  }
+
+  function updateCount() {
+    const n = (DATA?.professionals || []).filter(p => p.active !== false).length;
+    $('#count-active').textContent = n;
+  }
+
+  // ===== Render =====
+  function renderAll() {
+    renderPros();
+    renderMerch();
+    renderConfig();
+    updateCount();
+  }
+
+  function renderPros() {
+    const root = $('#pane-pros');
+    const pros = (DATA.professionals || []).slice().sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
+    root.innerHTML = '';
+
+    // Globals card
+    const g = DATA.globals || {};
+    const globals = document.createElement('div');
+    globals.className = 'card';
+    globals.innerHTML = `
+      <div class="card-head"><span class="name">Configuració <em>global</em></span><span class="chev">▾</span></div>
+      <div class="card-body">
+        <div class="field">
+          <label>Missatge WhatsApp per defecte</label>
+          <textarea data-bind="globals.whatsappDefaultMessage" rows="3">${esc(g.whatsappDefaultMessage || '')}</textarea>
+          <div class="hint">S'envia automàticament quan algú escaneja el QR. Cada professional pot tenir un override.</div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Tagline marca</label>
+            <input data-bind="globals.tagline" value="${esc(g.tagline || '')}">
+          </div>
+          <div class="field">
+            <label>Coordenades</label>
+            <input data-bind="globals.coords" value="${esc(g.coords || '')}">
+          </div>
+        </div>
+      </div>`;
+    root.appendChild(globals);
+
+    // Intro card
+    const intro = DATA.intro || {};
+    const introCard = document.createElement('div');
+    introCard.className = 'card';
+    introCard.innerHTML = `
+      <div class="card-head">
+        <span class="name">Slide d'<em>intro</em></span>
+        <span class="tag">Bucle</span>
+        <span class="toggle ${intro.active !== false ? 'on' : ''}" data-toggle="intro.active"></span>
+        <span class="chev">▾</span>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="field">
+            <label>Títol</label>
+            <input data-bind="intro.headline" value="${esc(intro.headline || '')}">
+          </div>
+          <div class="field">
+            <label>Accent (en italic)</label>
+            <input data-bind="intro.headlineAccent" value="${esc(intro.headlineAccent || '')}">
+          </div>
+        </div>
+        <div class="field">
+          <label>Subtítol</label>
+          <textarea data-bind="intro.subline" rows="2">${esc(intro.subline || '')}</textarea>
+        </div>
+        <div class="field">
+          <label>Línia coach</label>
+          <input data-bind="intro.coachLine" value="${esc(intro.coachLine || '')}">
+        </div>
+      </div>`;
+    root.appendChild(introCard);
+
+    // Pros
+    pros.forEach((p, idx) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const bulletsHtml = (p.bullets || []).map((b, i) => `
+        <div class="bullet-row">
+          <input data-bind-bullet="${p.id}|${i}" value="${esc(b)}">
+          <button class="btn ghost icon" data-del-bullet="${p.id}|${i}">✕</button>
+        </div>`).join('');
+      card.innerHTML = `
+        <div class="card-head">
+          <span class="grip">⋮⋮</span>
+          <span class="name">${esc(p.name || '(sense nom)')}</span>
+          <span class="tag">${esc(p.specialtyShort || p.specialty || '')}</span>
+          <span class="toggle ${p.active !== false ? 'on' : ''}" data-toggle="pro|${p.id}|active"></span>
+          <span class="chev">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="field">
+              <label>Nom complet</label>
+              <input data-bind-pro="${p.id}|name" value="${esc(p.name || '')}">
+            </div>
+            <div class="field">
+              <label>Especialitat</label>
+              <input data-bind-pro="${p.id}|specialty" value="${esc(p.specialty || '')}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label>Etiqueta curta (badge)</label>
+              <input data-bind-pro="${p.id}|specialtyShort" value="${esc(p.specialtyShort || '')}">
+            </div>
+            <div class="field">
+              <label>Ordre</label>
+              <input type="number" data-bind-pro="${p.id}|order" value="${p.order ?? 0}">
+            </div>
+          </div>
+          <div class="field">
+            <label>Bullets (línies de servei)</label>
+            <div class="bullets-list" data-bullets="${p.id}">${bulletsHtml}</div>
+            <button class="btn ghost icon" data-add-bullet="${p.id}" style="align-self:start;margin-top:6px;">+ Afegir línia</button>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label>Telèfon WhatsApp (amb prefix 34)</label>
+              <input data-bind-pro="${p.id}|whatsapp.phone" value="${esc(p.whatsapp?.phone || '')}">
+              <div class="hint">Format: 34690020769 (sense espais ni símbols)</div>
+            </div>
+            <div class="field">
+              <label>Color d'accent</label>
+              <div class="swatch-input">
+                <input type="color" data-bind-pro="${p.id}|accentColor" value="${esc(p.accentColor || '#7a7048')}">
+                <input data-bind-pro="${p.id}|accentColor" value="${esc(p.accentColor || '#7a7048')}" style="flex:1;">
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Missatge WhatsApp personalitzat (opcional)</label>
+            <textarea data-bind-pro="${p.id}|whatsapp.messageOverride" rows="2" placeholder="Si es deixa buit, es fa servir el missatge global">${esc(p.whatsapp?.messageOverride || '')}</textarea>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label>Vídeo (path o URL)</label>
+              <input data-bind-pro="${p.id}|media.videoSrc" value="${esc(p.media?.videoSrc || '')}">
+            </div>
+            <div class="field">
+              <label>Foto fallback</label>
+              <input data-bind-pro="${p.id}|media.photoSrc" value="${esc(p.media?.photoSrc || '')}">
+            </div>
+          </div>
+        </div>`;
+      root.appendChild(card);
+    });
+
+    bindCardCollapse();
+    bindAllInputs();
+  }
+
+  function renderMerch() {
+    const root = $('#pane-merch');
+    const m = DATA.merch || {};
+    const productsHtml = (m.products || []).map((p, i) => `
+      <div class="card" style="margin-bottom:10px;background:var(--ink);">
+        <div class="row">
+          <div class="field">
+            <label>Nom producte</label>
+            <input data-bind-merch-prod="${i}|name" value="${esc(p.name || '')}">
+          </div>
+          <div class="field">
+            <label>Colors (separats per coma)</label>
+            <input data-bind-merch-prod="${i}|colors" value="${esc((p.colors || []).join(', '))}">
+          </div>
+        </div>
+      </div>`).join('');
+
+    root.innerHTML = `
+      <div class="card">
+        <div class="card-head">
+          <span class="name">Slide <em>merch</em></span>
+          <span class="toggle ${m.active !== false ? 'on' : ''}" data-toggle="merch.active"></span>
+          <span class="chev">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="field">
+              <label>Nom col·lecció</label>
+              <input data-bind="merch.collectionName" value="${esc(m.collectionName || '')}">
+            </div>
+            <div class="field">
+              <label>Titular</label>
+              <input data-bind="merch.headline" value="${esc(m.headline || '')}">
+            </div>
+          </div>
+          <div class="field">
+            <label>Subtítol</label>
+            <input data-bind="merch.subline" value="${esc(m.subline || '')}">
+          </div>
+          <div class="field">
+            <label>CTA</label>
+            <input data-bind="merch.ctaLabel" value="${esc(m.ctaLabel || '')}">
+          </div>
+          <div class="field">
+            <label>Productes</label>
+            <div>${productsHtml}</div>
+          </div>
+          <div class="card" style="background:var(--ink);">
+            <div class="card-head"><span class="name">3D <em>Spline</em></span><span class="toggle ${m.spline?.enabled ? 'on' : ''}" data-toggle="merch.spline.enabled"></span><span class="chev">▾</span></div>
+            <div class="card-body">
+              <div class="field">
+                <label>URL Spline (embed públic)</label>
+                <input data-bind="merch.spline.embedUrl" value="${esc(m.spline?.embedUrl || '')}" placeholder="https://my.spline.design/...">
+                <div class="hint">Quan tinguis l'escena 3D feta a Spline, enganxa l'URL d'embed aquí.</div>
+              </div>
+              <div class="field">
+                <label>Imatge fallback</label>
+                <input data-bind="merch.spline.fallbackImg" value="${esc(m.spline?.fallbackImg || '')}">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    bindCardCollapse();
+    bindAllInputs();
+  }
+
+  function renderConfig() {
+    const root = $('#pane-config');
+    const c = CONFIG || {};
+    root.innerHTML = `
+      <div class="card">
+        <div class="card-head"><span class="name">Carrusel</span><span class="chev">▾</span></div>
+        <div class="card-body">
+          <div class="row">
+            <div class="field">
+              <label>Durada per slide (ms)</label>
+              <input type="number" data-bind-cfg="carousel.slideDurationMs" value="${c.carousel?.slideDurationMs ?? 11000}">
+            </div>
+            <div class="field">
+              <label>Transició crossfade (ms)</label>
+              <input type="number" data-bind-cfg="carousel.transitionMs" value="${c.carousel?.transitionMs ?? 900}">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="name">Visualització</span><span class="chev">▾</span></div>
+        <div class="card-body">
+          <div class="row">
+            <div class="field">
+              <label>Rellotge visible</label>
+              <select data-bind-cfg="display.showClock"><option value="true" ${c.display?.showClock !== false ? 'selected' : ''}>Sí</option><option value="false" ${c.display?.showClock === false ? 'selected' : ''}>No</option></select>
+            </div>
+            <div class="field">
+              <label>Protecció burn-in</label>
+              <select data-bind-cfg="display.burnInProtection"><option value="true" ${c.display?.burnInProtection !== false ? 'selected' : ''}>Sí</option><option value="false" ${c.display?.burnInProtection === false ? 'selected' : ''}>No</option></select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="name">QR</span><span class="chev">▾</span></div>
+        <div class="card-body">
+          <div class="row">
+            <div class="field">
+              <label>Mida QR (px)</label>
+              <input type="number" data-bind-cfg="qr.size" value="${c.qr?.size ?? 420}">
+            </div>
+            <div class="field">
+              <label>Nivell correcció</label>
+              <select data-bind-cfg="qr.ecLevel">
+                ${['L','M','Q','H'].map(l => `<option value="${l}" ${c.qr?.ecLevel === l ? 'selected' : ''}>${l}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    bindCardCollapse();
+    bindAllInputs();
+  }
+
+  // ===== Bindings =====
+  function bindCardCollapse() {
+    $$('.card-head').forEach(h => {
+      if (h.dataset.bound) return;
+      h.dataset.bound = '1';
+      h.addEventListener('click', (e) => {
+        if (e.target.closest('.toggle') || e.target.closest('input') || e.target.closest('button')) return;
+        h.parentElement.classList.toggle('collapsed');
+      });
+    });
+    $$('.toggle').forEach(t => {
+      if (t.dataset.bound) return;
+      t.dataset.bound = '1';
+      t.addEventListener('click', (e) => {
+        e.stopPropagation();
+        t.classList.toggle('on');
+        const on = t.classList.contains('on');
+        const key = t.dataset.toggle;
+        applyToggle(key, on);
+        saveDraft();
+      });
+    });
+  }
+
+  function applyToggle(key, on) {
+    if (key === 'intro.active') DATA.intro = { ...(DATA.intro||{}), active: on };
+    else if (key === 'merch.active') DATA.merch = { ...(DATA.merch||{}), active: on };
+    else if (key === 'merch.spline.enabled') DATA.merch.spline = { ...(DATA.merch.spline||{}), enabled: on };
+    else if (key.startsWith('pro|')) {
+      const [, id] = key.split('|');
+      const pro = DATA.professionals.find(p => p.id === id);
+      if (pro) pro.active = on;
+    }
+  }
+
+  function setByPath(obj, path, value) {
+    const parts = path.split('.');
+    let o = obj;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (!o[parts[i]] || typeof o[parts[i]] !== 'object') o[parts[i]] = {};
+      o = o[parts[i]];
+    }
+    o[parts[parts.length - 1]] = value;
+  }
+
+  function bindAllInputs() {
+    // generic data-bind (DATA root paths like globals.tagline, intro.headline, merch.collectionName)
+    $$('[data-bind]').forEach(el => {
+      if (el.dataset.bound) return;
+      el.dataset.bound = '1';
+      el.addEventListener('input', () => {
+        setByPath(DATA, el.dataset.bind, el.value);
+        saveDraft();
+      });
+    });
+    // data-bind-pro
+    $$('[data-bind-pro]').forEach(el => {
+      if (el.dataset.bound) return;
+      el.dataset.bound = '1';
+      el.addEventListener('input', () => {
+        const [id, path] = el.dataset.bindPro.split('|');
+        const pro = DATA.professionals.find(p => p.id === id);
+        if (!pro) return;
+        let val = el.value;
+        if (path === 'order') val = parseInt(val, 10) || 0;
+        if (path === 'whatsapp.messageOverride' && val.trim() === '') val = null;
+        setByPath(pro, path, val);
+        saveDraft();
+      });
+    });
+    // bullets
+    $$('[data-bind-bullet]').forEach(el => {
+      if (el.dataset.bound) return;
+      el.dataset.bound = '1';
+      el.addEventListener('input', () => {
+        const [id, idx] = el.dataset.bindBullet.split('|');
+        const pro = DATA.professionals.find(p => p.id === id);
+        if (!pro) return;
+        if (!Array.isArray(pro.bullets)) pro.bullets = [];
+        pro.bullets[parseInt(idx, 10)] = el.value;
+        saveDraft();
+      });
+    });
+    $$('[data-add-bullet]').forEach(b => {
+      if (b.dataset.bound) return;
+      b.dataset.bound = '1';
+      b.addEventListener('click', () => {
+        const id = b.dataset.addBullet;
+        const pro = DATA.professionals.find(p => p.id === id);
+        if (!pro) return;
+        if (!Array.isArray(pro.bullets)) pro.bullets = [];
+        pro.bullets.push('');
+        saveDraft();
+        renderPros();
+      });
+    });
+    $$('[data-del-bullet]').forEach(b => {
+      if (b.dataset.bound) return;
+      b.dataset.bound = '1';
+      b.addEventListener('click', () => {
+        const [id, idx] = b.dataset.delBullet.split('|');
+        const pro = DATA.professionals.find(p => p.id === id);
+        if (!pro) return;
+        pro.bullets.splice(parseInt(idx, 10), 1);
+        saveDraft();
+        renderPros();
+      });
+    });
+    // merch products
+    $$('[data-bind-merch-prod]').forEach(el => {
+      if (el.dataset.bound) return;
+      el.dataset.bound = '1';
+      el.addEventListener('input', () => {
+        const [idx, field] = el.dataset.bindMerchProd.split('|');
+        const p = DATA.merch.products[parseInt(idx, 10)];
+        if (!p) return;
+        if (field === 'colors') p.colors = el.value.split(',').map(s => s.trim()).filter(Boolean);
+        else p[field] = el.value;
+        saveDraft();
+      });
+    });
+    // config
+    $$('[data-bind-cfg]').forEach(el => {
+      if (el.dataset.bound) return;
+      el.dataset.bound = '1';
+      el.addEventListener('input', () => {
+        let val = el.value;
+        if (el.type === 'number') val = parseInt(val, 10) || 0;
+        else if (el.tagName === 'SELECT' && (val === 'true' || val === 'false')) val = val === 'true';
+        setByPath(CONFIG, el.dataset.bindCfg, val);
+        saveDraft();
+      });
+    });
+  }
+
+  // ===== Tabs =====
+  $$('.tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $$('.tabs button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      $$('.pane').forEach(p => p.classList.remove('active'));
+      $(`[data-pane="${btn.dataset.tab}"]`).classList.add('active');
+    });
+  });
+
+  // ===== Preview refresh =====
+  function refreshPreviewDebounced() {
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(refreshPreviewImmediate, 800);
+  }
+  function refreshPreviewImmediate() {
+    const iframe = $('#preview');
+    // We can't inject DATA into the iframe (cross-document mess). Best UX:
+    // reload iframe — it will fetch services.json. Since we save to localStorage only,
+    // user must publish to see changes in preview from live JSON.
+    // Workaround: pass data via postMessage. But for v1 keep simple: reload to show *published* state.
+    // Show a toast hint instead.
+    statusMsg('Canvis guardats al navegador. Publica per veure-ho al TV.', 'info', 1800);
+  }
+  $('#btn-reload').addEventListener('click', () => {
+    $('#preview').contentWindow.location.reload();
+    statusMsg('Preview recarregada (estat publicat)', 'info', 1500);
+  });
+
+  // ===== Status =====
+  function statusMsg(text, kind = 'info', timeout = 3500) {
+    const el = $('#status');
+    el.textContent = text;
+    el.className = `status show ${kind}`;
+    clearTimeout(statusMsg._t);
+    if (timeout) statusMsg._t = setTimeout(() => el.classList.remove('show'), timeout);
+  }
+
+  // ===== Discard / Download =====
+  $('#btn-discard').addEventListener('click', () => {
+    if (!confirm('Descartar tots els canvis locals i tornar a carregar des dels fitxers publicats?')) return;
+    localStorage.removeItem(STORAGE_DATA);
+    localStorage.removeItem(STORAGE_CONFIG);
+    location.reload();
+  });
+
+  $('#btn-download').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(DATA, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'services.json'; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    statusMsg('services.json descarregat', 'ok');
+  });
+
+  // ===== Publish =====
+  $('#btn-publish').addEventListener('click', () => {
+    const cfg = loadGhConfig();
+    $('#gh-repo').value = cfg.repo || 'jordiangladavilla-oss/lamola-tv-serveis';
+    $('#gh-branch').value = cfg.branch || 'main';
+    $('#gh-token').value = cfg.token || '';
+    $('#modal-gh').classList.add('on');
+  });
+  $('#gh-cancel').addEventListener('click', () => $('#modal-gh').classList.remove('on'));
+  $('#modal-gh').addEventListener('click', e => { if (e.target.id === 'modal-gh') $('#modal-gh').classList.remove('on'); });
+
+  $('#gh-save').addEventListener('click', async () => {
+    const repo = $('#gh-repo').value.trim();
+    const branch = $('#gh-branch').value.trim() || 'main';
+    const token = $('#gh-token').value.trim();
+    if (!repo || !token) { alert('Cal omplir repositori i token.'); return; }
+    if (!repo.includes('/')) { alert('El repositori ha de ser usuari/repo.'); return; }
+    saveGhConfig({ repo, branch, token });
+    $('#modal-gh').classList.remove('on');
+    await publishAll({ repo, branch, token });
+  });
+
+  function loadGhConfig() { try { return JSON.parse(localStorage.getItem(GH_KEY) || '{}'); } catch { return {}; } }
+  function saveGhConfig(c) { localStorage.setItem(GH_KEY, JSON.stringify(c)); }
+
+  async function publishAll({ repo, branch, token }) {
+    statusMsg('Publicant a GitHub…', 'info', 60_000);
+    try {
+      // bump version
+      DATA.version = (DATA.version || 0) + 1;
+      CONFIG.version = (CONFIG.version || 0) + 1;
+
+      await publishFile({ repo, branch, token }, 'services.json', DATA);
+      await publishFile({ repo, branch, token }, 'config.json', CONFIG);
+
+      localStorage.removeItem(STORAGE_DATA);
+      localStorage.removeItem(STORAGE_CONFIG);
+      statusMsg('Publicat! El TV s\'actualitza en ~10 min (o recarrega manual).', 'ok', 6000);
+      // Refresh preview to show published state
+      setTimeout(() => $('#preview').contentWindow.location.reload(), 1500);
+    } catch (err) {
+      console.error(err);
+      statusMsg('Error: ' + err.message, 'err', 8000);
+    }
+  }
+
+  async function publishFile({ repo, branch, token }, path, payload) {
+    const apiBase = `https://api.github.com/repos/${repo}/contents/${path}`;
+    const content = JSON.stringify(payload, null, 2);
+    let sha = null;
+    const getRes = await fetch(apiBase + '?ref=' + branch, {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (getRes.ok) { const j = await getRes.json(); sha = j.sha; }
+    else if (getRes.status !== 404) throw new Error(`GET ${path}: ${getRes.status}`);
+
+    const body = {
+      message: `Update ${path} from admin (${new Date().toLocaleString('ca-ES')})`,
+      content: btoa(unescape(encodeURIComponent(content))),
+      branch
+    };
+    if (sha) body.sha = sha;
+
+    const putRes = await fetch(apiBase, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!putRes.ok) {
+      const err = await putRes.json().catch(() => ({}));
+      throw new Error(`PUT ${path}: ${err.message || putRes.status}`);
+    }
+  }
+
+  // ===== Boot =====
+  loadAll().catch(err => {
+    console.error(err);
+    statusMsg('Error carregant: ' + err.message, 'err');
+  });
+  </script>
+</body>
+</html>

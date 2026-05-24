@@ -1,0 +1,10 @@
+_source/
+*.MP4
+!media/**/*.mp4
+.DS_Store
+Thumbs.db
+desktop.ini
+node_modules/
+.vscode/
+.idea/
+*.log

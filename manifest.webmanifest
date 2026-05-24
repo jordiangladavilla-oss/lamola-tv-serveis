@@ -1,0 +1,13 @@
+{
+  "name": "La Mola · Serveis TV",
+  "short_name": "La Mola TV",
+  "description": "Kiosk de serveis del coffee corner del CrossFit La Mola",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#100e0b",
+  "theme_color": "#100e0b",
+  "icons": [
+    { "src": "media/brand/logo-short.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "carousel": {
+    "slideDurationMs": 22000,
+    "transitionMs": 900,
+    "videoMaxPlayMs": 24000,
+    "slideDurations": {
+      "intro": 5000,
+      "proIntro": 4000,
+      "pro": 22000,
+      "merch": 18000
+    }
+  },
+  "display": {
+    "showClock": true,
+    "showCoords": true,
+    "burnInProtection": true,
+    "burnInDriftPx": 2,
+    "burnInIntervalMs": 60000
+  },
+  "data": {
+    "refetchIntervalMs": 600000
+  },
+  "qr": {
+    "size": 420,
+    "ecLevel": "M"
+  },
+  "idle": {
+    "errorRetryMs": 30000
+  }
+}

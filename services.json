@@ -1,0 +1,151 @@
+{
+  "version": 1,
+  "globals": {
+    "whatsappDefaultMessage": "Hola, sóc soci del CrossFit La Mola. M'agradaria rebre més informació sobre el servei i consultar disponibilitat. Moltes gràcies!",
+    "tagline": "LIFT. BREATHE. REPEAT.",
+    "coords": "41°38'28\"N 2°01'04\"E"
+  },
+  "intro": {
+    "active": true,
+    "headline": "Els nostres",
+    "headlineAccent": "serveis",
+    "subline": "Coneix els professionals del box i agenda visita.",
+    "coachLine": "BUILD STRENGTH TOGETHER"
+  },
+  "professionals": [
+    {
+      "id": "carlos",
+      "active": true,
+      "order": 1,
+      "name": "Carlos Clemente",
+      "specialty": "Fisioteràpia",
+      "specialtyShort": "Fisio",
+      "bullets": [
+        "Recuperació de lesions esportives",
+        "Teràpia manual i puntura seca",
+        "Readaptació post-WOD"
+      ],
+      "media": {
+        "type": "video",
+        "videoSrc": "media/pros/carlos/video.mp4",
+        "posterSrc": "media/pros/carlos/poster.jpg",
+        "photoSrc": "media/pros/carlos/photo.jpg",
+        "logoSrc": null
+      },
+      "whatsapp": {
+        "phone": "34690020769",
+        "messageOverride": null
+      },
+      "accentColor": "#7a7048",
+      "ctaLabel": "Escaneja i agenda visita"
+    },
+    {
+      "id": "pablo",
+      "active": true,
+      "order": 2,
+      "name": "Pablo Aguado",
+      "specialty": "Fisioteràpia",
+      "specialtyShort": "Fisio",
+      "bullets": [
+        "Diagnòstic musculoesquelètic",
+        "Massatge esportiu i descontracturant",
+        "Prevenció de lesions"
+      ],
+      "media": {
+        "type": "video",
+        "videoSrc": "media/pros/pablo/video.mp4",
+        "posterSrc": "media/pros/pablo/poster.jpg",
+        "photoSrc": "media/pros/pablo/photo.jpg",
+        "logoSrc": null
+      },
+      "whatsapp": {
+        "phone": "34676710356",
+        "messageOverride": null
+      },
+      "accentColor": "#7a7048",
+      "ctaLabel": "Escaneja i agenda visita"
+    },
+    {
+      "id": "maria",
+      "active": true,
+      "order": 3,
+      "name": "Maria Casares",
+      "specialty": "Performance Nutrition",
+      "specialtyShort": "Nutrició",
+      "bullets": [
+        "Nutrició esportiva personalitzada",
+        "Plans per a objectius de rendiment",
+        "Composició corporal i seguiment"
+      ],
+      "media": {
+        "type": "video",
+        "videoSrc": "media/pros/maria/video.mp4",
+        "posterSrc": "media/pros/maria/poster.jpg",
+        "photoSrc": "media/pros/maria/photo.jpg",
+        "logoSrc": "media/pros/maria/logo.jpg"
+      },
+      "whatsapp": {
+        "phone": "34659874827",
+        "messageOverride": null
+      },
+      "accentColor": "#b9a972",
+      "ctaLabel": "Escaneja i agenda visita"
+    },
+    {
+      "id": "ivet",
+      "active": true,
+      "order": 4,
+      "name": "Ivet Molina",
+      "specialty": "Mobilitin",
+      "specialtyShort": "Mobilitat",
+      "bullets": [
+        "Mobilitat articular específica",
+        "Treball de rang per a patrons OLY",
+        "Sessions individuals i grupals"
+      ],
+      "media": {
+        "type": "video",
+        "videoSrc": "media/pros/ivet/video.mp4",
+        "posterSrc": "media/pros/ivet/poster.jpg",
+        "photoSrc": "media/pros/ivet/photo.jpg",
+        "logoSrc": null
+      },
+      "whatsapp": {
+        "phone": "34660929535",
+        "messageOverride": null
+      },
+      "accentColor": "#7a7048",
+      "ctaLabel": "Escaneja i agenda visita"
+    }
+  ],
+  "merch": {
+    "active": false,
+    "collectionName": "Summer 2026",
+    "headline": "Nova col·lecció",
+    "subline": "Build strength together.",
+    "tagline": "LIFT. BREATHE. REPEAT.",
+    "price": "27€",
+    "priceLabel": "Tots els models",
+    "products": [
+      { "id": "sarek-tee",     "name": "Sarek Tee",     "tagline": "Regular fit",      "colors": ["Iceberg", "Double Cream", "Cameo Brown", "Rhodo"],   "swatches": ["#cfdee0", "#efe6c0", "#e9b5a2", "#6e2a3a"] },
+      { "id": "crop-top",      "name": "Crop Top",      "tagline": "Cropped",          "colors": ["Coconut Milk", "String", "Black"],                    "swatches": ["#efe6d4", "#d8cfb8", "#1a1a1a"] },
+      { "id": "tank-top",      "name": "Tank Top",      "tagline": "Sense mànigues",   "colors": ["Coconut Milk", "String", "Black"],                    "swatches": ["#efe6d4", "#d8cfb8", "#1a1a1a"] },
+      { "id": "coach-edition", "name": "COACH Edition", "tagline": "Sèrie limitada",   "colors": ["Negre", "String", "Cypress"],                         "swatches": ["#1a1a1a", "#d8cfb8", "#3d5043"] }
+    ],
+    "palette": [
+      { "name": "Iceberg",      "hex": "#cfdee0" },
+      { "name": "Double Cream", "hex": "#efe6c0" },
+      { "name": "Cameo Brown",  "hex": "#e9b5a2" },
+      { "name": "Rhodo",        "hex": "#6e2a3a" },
+      { "name": "Black",        "hex": "#1a1a1a" },
+      { "name": "Cypress",      "hex": "#3d5043" }
+    ],
+    "spline": {
+      "enabled": false,
+      "embedUrl": "",
+      "fallbackImg": "media/brand/logo-short.png"
+    },
+    "ctaLabel": "Pregunta a recepció"
+  },
+  "promos": []
+}

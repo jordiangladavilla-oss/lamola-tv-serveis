@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <title>La Mola · Serveis</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#100e0b">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preload" as="font" type="font/woff2" href="fonts/montserrat-latin-500-normal.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="fonts/montserrat-latin-800-normal.woff2" crossorigin>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/tv.css">
+  <link rel="icon" href="media/brand/logo-short.png" type="image/png">
+</head>
+<body class="tv">
+  <main id="stage" class="stage" aria-live="polite"></main>
+
+  <div class="hud" id="hud">
+    <div class="hud-left">
+      <span class="hud-brand">LA MOLA<em>.</em></span>
+      <span class="hud-coords" id="coords">41°38'28"N 2°01'04"E</span>
+    </div>
+    <div class="hud-right">
+      <span class="hud-tagline">LIFT. BREATHE. REPEAT.</span>
+      <span class="hud-clock" id="clock"></span>
+    </div>
+  </div>
+
+  <div id="loading" class="overlay overlay-loading">
+    <div class="overlay-brand">LA MOLA<em>.</em></div>
+    <div class="overlay-spinner"></div>
+  </div>
+
+  <div id="error-screen" class="overlay overlay-error" hidden>
+    <div class="overlay-brand">LA MOLA<em>.</em></div>
+    <div class="overlay-msg">Reintentant connexió…</div>
+  </div>
+
+  <script src="js/tv/vendor/qrcode.min.js"></script>
+  <script type="module" src="js/tv/main.js"></script>
+</body>
+</html>
