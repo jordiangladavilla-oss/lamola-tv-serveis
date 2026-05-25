@@ -1,6 +1,6 @@
 // Service Worker: cache shell offline. Network-first for data, cache-first for assets.
 
-const VERSION = 'v2';
+const VERSION = 'v3';
 const SHELL_CACHE = `lamola-tv-shell-${VERSION}`;
 const DATA_CACHE = `lamola-tv-data-${VERSION}`;
 
@@ -44,44 +44,52 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Media files use Range requests → 206 responses can't be cached
+function isUncacheableMedia(url) {
+  return /\.(mp4|webm|mov|m4v)$/i.test(url.pathname);
+}
+function isCacheableResponse(res) {
+  return res && res.ok && res.status === 200 && res.type === 'basic';
+}
+
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
 
   const url = new URL(req.url);
-  const sameOrigin = url.origin === self.location.origin;
-  if (!sameOrigin) return; // let cross-origin (Spline, etc.) go to network
+  if (url.origin !== self.location.origin) return;
+  if (isUncacheableMedia(url)) return;
 
   const isData = url.pathname.endsWith('/services.json') || url.pathname.endsWith('/config.json');
 
   if (isData) {
-    // Network-first, fallback to cache
     event.respondWith(
       fetch(req)
         .then(res => {
-          if (res && res.ok) {
+          if (isCacheableResponse(res)) {
             const copy = res.clone();
-            caches.open(DATA_CACHE).then(c => c.put(req, copy));
+            caches.open(DATA_CACHE).then(c => c.put(req, copy)).catch(() => {});
           }
           return res;
         })
         .catch(() => caches.match(req).then(r => r || new Response('{}', { headers: { 'Content-Type': 'application/json' } })))
     );
   } else {
-    // Cache-first for shell + media
     event.respondWith(
       caches.match(req).then(cached => {
         if (cached) {
-          // Refresh in background
           fetch(req).then(res => {
-            if (res && res.ok) caches.open(SHELL_CACHE).then(c => c.put(req, res));
+            if (isCacheableResponse(res)) {
+              const copy = res.clone();
+              caches.open(SHELL_CACHE).then(c => c.put(req, copy)).catch(() => {});
+            }
           }).catch(() => {});
           return cached;
         }
         return fetch(req).then(res => {
-          if (res && res.ok && res.type === 'basic') {
+          if (isCacheableResponse(res)) {
             const copy = res.clone();
-            caches.open(SHELL_CACHE).then(c => c.put(req, copy));
+            caches.open(SHELL_CACHE).then(c => c.put(req, copy)).catch(() => {});
           }
           return res;
         });
