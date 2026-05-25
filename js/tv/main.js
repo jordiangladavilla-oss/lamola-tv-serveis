@@ -60,11 +60,6 @@ async function bootstrap() {
     }
 
     hideOverlays();
-
-    // Register SW only in production (not preview)
-    if ('serviceWorker' in navigator && !isPreview && location.protocol !== 'file:') {
-      try { await navigator.serviceWorker.register('./sw.js'); } catch (e) { console.warn('[sw] register failed', e); }
-    }
   } catch (err) {
     console.error('[main] bootstrap failed', err);
     showError();
