@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "globals": {
     "whatsappDefaultMessage": "Hola, sóc soci del CrossFit La Mola. M'agradaria rebre més informació sobre el servei i consultar disponibilitat. Moltes gràcies!",
     "tagline": "LIFT. BREATHE. REPEAT.",
@@ -7,8 +7,9 @@
   },
   "intro": {
     "active": true,
-    "headline": "Els nostres",
-    "headlineAccent": "serveis",
+    "headlineLogo": "media/brand/logo-short.png",
+    "headlineAccent": "Recovery",
+    "eyebrow": "Espai de benestar",
     "subline": "Coneix els professionals del box i agenda visita.",
     "coachLine": "BUILD STRENGTH TOGETHER"
   },
@@ -22,7 +23,7 @@
       "specialtyShort": "Fisio",
       "bullets": [
         "Recuperació de lesions esportives",
-        "Teràpia manual i puntura seca",
+        "Teràpia manual i Punció Seca",
         "Readaptació post-WOD"
       ],
       "media": {
@@ -47,9 +48,9 @@
       "specialty": "Fisioteràpia",
       "specialtyShort": "Fisio",
       "bullets": [
-        "Diagnòstic musculoesquelètic",
-        "Massatge esportiu i descontracturant",
-        "Prevenció de lesions"
+        "Diagnòstic musculoesquelètic i prevenció de lesions",
+        "Neuromodulació i electropunció",
+        "Readaptació esportiva i exercici terapèutic"
       ],
       "media": {
         "type": "video",
@@ -127,18 +128,94 @@
     "price": "27€",
     "priceLabel": "Tots els models",
     "products": [
-      { "id": "sarek-tee",     "name": "Sarek Tee",     "tagline": "Regular fit",      "colors": ["Iceberg", "Double Cream", "Cameo Brown", "Rhodo"],   "swatches": ["#cfdee0", "#efe6c0", "#e9b5a2", "#6e2a3a"] },
-      { "id": "crop-top",      "name": "Crop Top",      "tagline": "Cropped",          "colors": ["Coconut Milk", "String", "Black"],                    "swatches": ["#efe6d4", "#d8cfb8", "#1a1a1a"] },
-      { "id": "tank-top",      "name": "Tank Top",      "tagline": "Sense mànigues",   "colors": ["Coconut Milk", "String", "Black"],                    "swatches": ["#efe6d4", "#d8cfb8", "#1a1a1a"] },
-      { "id": "coach-edition", "name": "COACH Edition", "tagline": "Sèrie limitada",   "colors": ["Negre", "String", "Cypress"],                         "swatches": ["#1a1a1a", "#d8cfb8", "#3d5043"] }
+      {
+        "id": "sarek-tee",
+        "name": "Sarek Tee",
+        "tagline": "Regular fit",
+        "colors": [
+          "Iceberg",
+          "Double Cream",
+          "Cameo Brown",
+          "Rhodo"
+        ],
+        "swatches": [
+          "#cfdee0",
+          "#efe6c0",
+          "#e9b5a2",
+          "#6e2a3a"
+        ]
+      },
+      {
+        "id": "crop-top",
+        "name": "Crop Top",
+        "tagline": "Cropped",
+        "colors": [
+          "Coconut Milk",
+          "String",
+          "Black"
+        ],
+        "swatches": [
+          "#efe6d4",
+          "#d8cfb8",
+          "#1a1a1a"
+        ]
+      },
+      {
+        "id": "tank-top",
+        "name": "Tank Top",
+        "tagline": "Sense mànigues",
+        "colors": [
+          "Coconut Milk",
+          "String",
+          "Black"
+        ],
+        "swatches": [
+          "#efe6d4",
+          "#d8cfb8",
+          "#1a1a1a"
+        ]
+      },
+      {
+        "id": "coach-edition",
+        "name": "COACH Edition",
+        "tagline": "Sèrie limitada",
+        "colors": [
+          "Negre",
+          "String",
+          "Cypress"
+        ],
+        "swatches": [
+          "#1a1a1a",
+          "#d8cfb8",
+          "#3d5043"
+        ]
+      }
     ],
     "palette": [
-      { "name": "Iceberg",      "hex": "#cfdee0" },
-      { "name": "Double Cream", "hex": "#efe6c0" },
-      { "name": "Cameo Brown",  "hex": "#e9b5a2" },
-      { "name": "Rhodo",        "hex": "#6e2a3a" },
-      { "name": "Black",        "hex": "#1a1a1a" },
-      { "name": "Cypress",      "hex": "#3d5043" }
+      {
+        "name": "Iceberg",
+        "hex": "#cfdee0"
+      },
+      {
+        "name": "Double Cream",
+        "hex": "#efe6c0"
+      },
+      {
+        "name": "Cameo Brown",
+        "hex": "#e9b5a2"
+      },
+      {
+        "name": "Rhodo",
+        "hex": "#6e2a3a"
+      },
+      {
+        "name": "Black",
+        "hex": "#1a1a1a"
+      },
+      {
+        "name": "Cypress",
+        "hex": "#3d5043"
+      }
     ],
     "spline": {
       "enabled": false,
