@@ -1,11 +1,11 @@
 {
-  "version": 1,
+  "version": 2,
   "carousel": {
     "slideDurationMs": 22000,
     "transitionMs": 900,
     "videoMaxPlayMs": 24000,
     "slideDurations": {
-      "intro": 5000,
+      "intro": 15000,
       "proIntro": 4000,
       "pro": 22000,
       "merch": 18000
