@@ -34,11 +34,22 @@ function hideOverlays() {
   }, 700);
 }
 
+function prewarmVideos(services) {
+  const urls = (services?.professionals || [])
+    .filter(p => p.active !== false && p.media?.type === 'video' && p.media?.videoSrc)
+    .map(p => p.media.videoSrc);
+  for (const url of urls) {
+    fetch(url, { cache: 'force-cache' }).catch(() => {});
+  }
+}
+
 async function bootstrap() {
   try {
     const { services, config } = await loader.load();
 
     if (services?.globals?.coords && coordsEl) coordsEl.textContent = services.globals.coords;
+
+    prewarmVideos(services);
 
     carousel = new Carousel(stage, { services, config });
     carousel.start();
